@@ -1,6 +1,6 @@
 # React Simple Translate
 
-A straightforward translation component to be used with React.
+An easy to use and implement translation suite for React.
 
 ## Usage
 

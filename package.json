@@ -1,6 +1,6 @@
 {
   "name": "react-simple-translate",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "An easy to use and implement translation suite for React",
   "entry": "",
   "main": "./lib/index.js",
@@ -8,6 +8,10 @@
   "author": "Kevin Whitaker",
   "license": "MIT",
   "private": false,
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/kwhitaker/react-simple-translate"
+  },
   "scripts": {
     "build": "yarn clean && tsc",
     "clean": "rimraf ./lib",
