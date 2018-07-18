@@ -20,12 +20,12 @@ Given a string with keys, replace those keys with values from a provided object.
 
 #### Usage
 
-```
-  import { Interpolate } from "react-simple-translate";
-  const values = {
-    name: "Bob"
-  };
+```javascript
+import { Interpolate } from "react-simple-translate";
+const values = {
+  name: "Bob"
+};
 
-  // Returns <span>Hello, Bob</span>
-  return <Interpolate with={values}>Hello, %(name)s</Interpolate>;
+// Returns <span>Hello, Bob</span>
+return <Interpolate with={values}>Hello, %(name)s</Interpolate>;
 ```
