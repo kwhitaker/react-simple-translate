@@ -31,7 +31,7 @@ const values = {
 };
 
 // Returns <span>Hello, Bob</span>
-return <Translate with={values}></Translate>
+return <Translate with={values}>test.greeting</Translate>
 ```
 ---
 
