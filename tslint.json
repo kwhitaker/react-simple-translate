@@ -1,13 +1,8 @@
 {
-  "extends": [
-    "tslint:latest",
-    "tslint-config-prettier"
-  ],
+  "extends": ["tslint-config-prettier"],
   "rules": {
-    "no-implicit-dependencies": [
-      true,
-      "dev"
-    ],
-    "ordered-imports": false
+    "no-implicit-dependencies": [true, "dev"],
+    "ordered-imports": false,
+    "no-reference": false
   }
 }

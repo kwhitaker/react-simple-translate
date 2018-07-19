@@ -8,6 +8,16 @@ TBD
 
 ## API
 
+### `<Translate with={Object}>{children}</Translate>`
+
+Given a string with keys, replace those keys with values from the current `counterpart` locale.
+
+#### Arguments
+
+- **with**: An object of key value pairs where the keys match the specified keys in **children**. Values must be of type `React.ReactChild`;
+- **component**: The component that will surround the interpolated string. Defaults to `span`
+- **children**: The string to be interpolated. Keys to replace _must_ be surrouned with `%()s` (i.e. `%(name)s`)
+
 ### `<Interpolate with={Object}>{children}</Interpolate>`
 
 Given a string with keys, replace those keys with values from a provided object.
