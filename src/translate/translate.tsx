@@ -28,13 +28,20 @@ export class Translate extends React.PureComponent<
   constructor(props: ITranslateProps) {
     super(props);
     this.state = {
-      locale: getLocale()
+      locale: props.locale || getLocale()
     };
   }
 
   public componentDidMount() {
     if (!this.props.locale) {
       onLocaleChange(this.handleChangeLocale);
+    }
+  }
+
+  public componentDidUpdate(lastProps: ITranslateProps) {
+    const { locale } = this.props;
+    if (locale && lastProps.locale !== locale) {
+      this.setState({ locale });
     }
   }
 
@@ -58,7 +65,7 @@ export class Translate extends React.PureComponent<
     return <Interpolate {...rest}>{translation}</Interpolate>;
   }
 
-  private handleChangeLocale = (newLocale: string) => {
-    this.setState({ locale: newLocale });
+  private handleChangeLocale = (locale: string) => {
+    this.setState({ locale });
   };
 }

@@ -25,6 +25,8 @@ const values = {
   name: "foobar"
 };
 
+const defaultExpected = "<span>Hello, foobar</span>";
+
 counterpart.registerTranslations("en", en);
 counterpart.registerTranslations("de", de);
 
@@ -34,6 +36,10 @@ const withEn = withLocale("en");
 const withDe = withLocale("de");
 
 describe("<Translate />", () => {
+  beforeEach(() => {
+    counterpart.setLocale(undefined);
+  });
+
   it("passes the props down to the <Interpolate /> component", () => {
     withEn(function() {
       const elem = shallow(
@@ -41,14 +47,14 @@ describe("<Translate />", () => {
           test.greeting
         </Translate>
       );
-      expect(elem.prop("className")).toBe("foo");
+      expect(elem.prop("className")).toEqual("foo");
     });
   });
 
   it("creates a component with the expected translated text", () => {
     withEn(function() {
       const elem = shallow(<Translate with={values}>test.greeting</Translate>);
-      expect(elem.html()).toEqual("<span>Hello, foobar</span>");
+      expect(elem.html()).toEqual(defaultExpected);
     });
 
     withDe(function() {
@@ -68,11 +74,40 @@ describe("<Translate />", () => {
     });
   });
 
-  it.skip("listens for locale switching and updates", () => {
-    const translator = new (counterpart as any).Instance();
-    translator.registerTranslations("en", en);
-    translator.setLocale("en");
-    const elem = mount(<Translate with={values}>test.greeting</Translate>);
-    console.log(elem.props());
+  // This test is probably extraneous, but just in case
+  it("works with string templates", () => {
+    const someVar = "test";
+    withEn(() => {
+      const elem = shallow(
+        <Translate with={values}>{`${someVar}.greeting`}</Translate>
+      );
+      expect(elem.html()).toEqual(defaultExpected);
+    });
+  });
+
+  it("respects a locale that's set as a prop", () => {
+    withDe(() => {
+      const elem = shallow(
+        <Translate with={values} locale="en">
+          test.greeting
+        </Translate>
+      );
+      expect(elem.state("locale")).toEqual("en");
+      expect(elem.html()).toEqual(defaultExpected);
+    });
+  });
+
+  it("listens for locale switching and updates", () => {
+    counterpart.setLocale("en");
+    const elem = shallow(<Translate with={values}>test.greeting</Translate>);
+
+    expect(elem.state("locale")).toEqual("en");
+    expect(elem.html()).toEqual(defaultExpected);
+
+    counterpart.setLocale("de");
+    elem.update();
+
+    expect(elem.state("locale")).toEqual("de");
+    expect(elem.html()).toEqual("<span>Guten Tag, foobar</span>");
   });
 });

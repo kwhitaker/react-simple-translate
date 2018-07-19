@@ -1,10 +1,33 @@
 # React Simple Translate
 
-An easy to use and implement translation suite for React.
+An easy to use translation component which wraps the [counterpart](https://github.com/martinandert/counterpart/) module.
 
 ## Usage
 
-TBD
+```javascript
+import { Translate } from "react-simple-translate";
+import * as counterpart from "counterpart";
+
+counterpart.registerTranslations("en", {
+  test: { greeting: "Hello, %(name)s" }
+});
+counterpart.registerTranslations("de", {
+  test: { greeting: "Guten Tag, %(name)s" }
+});
+counterpart.setLocale("en");
+
+const values = {
+  name: "Bob"
+};
+
+// Returns <span>Hello, Bob</span>
+return <Translate with={values}>test.greeting</Translate>;
+
+counterpart.setLocale("de");
+
+// Returns <span>Guten Tag, Bob</span>
+return <Translate with={values}>test.greeting</Translate>;
+```
 
 ## API
 
@@ -19,11 +42,14 @@ Given a string with keys, replace those keys with values from the current `count
 - **children**: The string to be interpolated. Keys to replace _must_ be surrouned with `%()s` (i.e. `%(name)s`)
 
 #### Usage
+
 ```javascript
 import { Translate } from "react-simple-translate";
 import * as counterpart from "counterpart";
 
-counterpart.registerTranslations("en", {test: { greeting: "Hello, %(name)s" } });
+counterpart.registerTranslations("en", {
+  test: { greeting: "Hello, %(name)s" }
+});
 counterpart.setLocale("en");
 
 const values = {
@@ -31,8 +57,9 @@ const values = {
 };
 
 // Returns <span>Hello, Bob</span>
-return <Translate with={values}>test.greeting</Translate>
+return <Translate with={values}>test.greeting</Translate>;
 ```
+
 ---
 
 ### `<Interpolate with={Object}>{children}</Interpolate>`
