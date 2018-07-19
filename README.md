@@ -18,6 +18,23 @@ Given a string with keys, replace those keys with values from the current `count
 - **component**: The component that will surround the interpolated string. Defaults to `span`
 - **children**: The string to be interpolated. Keys to replace _must_ be surrouned with `%()s` (i.e. `%(name)s`)
 
+#### Usage
+```javascript
+import { Translate } from "react-simple-translate";
+import * as counterpart from "counterpart";
+
+counterpart.registerTranslations("en", {test: { greeting: "Hello, %(name)s" } });
+counterpart.setLocale("en");
+
+const values = {
+  name: "Bob"
+};
+
+// Returns <span>Hello, Bob</span>
+return <Translate with={values}></Translate>
+```
+---
+
 ### `<Interpolate with={Object}>{children}</Interpolate>`
 
 Given a string with keys, replace those keys with values from a provided object.
