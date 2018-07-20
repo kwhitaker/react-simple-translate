@@ -4,9 +4,11 @@ import { getLocale, onLocaleChange, translate } from "counterpart";
 import { Interpolate } from "../interpolate/interpolate";
 
 interface ITranslateProps extends React.HTMLProps<HTMLElement> {
+  // FIXME it would be nice to limit this to valid HTML attributes
+  // but using Record<string, HTMLAttributes<HTMLElement>> causes issues below
+  attributes?: { [key: string]: string };
   children?: string | string[];
   component?: keyof React.ReactHTML;
-  count?: number;
   displayName?: string;
   locale?: string;
   with?: Record<string, React.ReactChild>;
@@ -48,21 +50,36 @@ export class Translate extends React.PureComponent<
   public render() {
     const { locale } = this.state;
     const {
+      attributes,
       children = "",
       displayName,
-      count,
       locale: propsLocale,
       ref, // Have to strip off ref for some reason?
       ...rest
     } = this.props;
 
-    const translation = translate(children, {
+    const translatedAttrs: { [key: string]: React.ReactChild } = attributes
+      ? Object.keys(attributes!).reduce((newAttrs, key) => {
+          newAttrs[key] = translate(attributes[key], {
+            locale,
+            interpolate: true,
+            ...this.props.with
+          });
+          return newAttrs;
+        }, {})
+      : {};
+
+    const translationPath = translate(children, {
       locale,
       interpolate: false,
       ...rest
     });
 
-    return <Interpolate {...rest}>{translation}</Interpolate>;
+    return (
+      <Interpolate {...rest} {...translatedAttrs}>
+        {translationPath}
+      </Interpolate>
+    );
   }
 
   private handleChangeLocale = (locale: string) => {

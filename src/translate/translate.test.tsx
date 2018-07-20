@@ -11,13 +11,15 @@ configure({ adapter: new Adapter() });
 
 const en = {
   test: {
-    greeting: "Hello, %(name)s"
+    greeting: "Hello, %(name)s",
+    title: "Click me, %(name)s"
   }
 };
 
 const de = {
   test: {
-    greeting: "Guten Tag, %(name)s"
+    greeting: "Guten Tag, %(name)s",
+    title: "Dies ist ein Titel"
   }
 };
 
@@ -71,6 +73,19 @@ describe("<Translate />", () => {
     withEn(() => {
       const elem = render(<Translate with={values}>test.greeting</Translate>);
       expect(elem.find("strong").length).toBe(1);
+    });
+  });
+
+  it("translates a set of attributes", () => {
+    withEn(() => {
+      const elem = shallow(
+        <Translate with={values} attributes={{ title: "test.title" }}>
+          test.greeting
+        </Translate>
+      );
+      expect(elem.html()).toEqual(
+        `<span title="Click me, foobar">Hello, foobar</span>`
+      );
     });
   });
 
