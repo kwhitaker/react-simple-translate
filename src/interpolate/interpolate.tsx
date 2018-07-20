@@ -4,6 +4,7 @@ const REGEXP = /\%\((.+?)\)s/;
 
 export interface IInterpolateProps extends React.HTMLProps<HTMLElement> {
   children?: string;
+  count?: number;
   component?: keyof React.ReactHTML;
   with?: Record<string, React.ReactChild>;
 }

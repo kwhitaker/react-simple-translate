@@ -6,20 +6,31 @@ import * as Adapter from "enzyme-adapter-react-16";
 import * as counterpart from "counterpart";
 
 import { Translate } from "./translate";
+import { localeDefaults } from "../counterpart-defaults";
 
 configure({ adapter: new Adapter() });
 
 const en = {
   test: {
     greeting: "Hello, %(name)s",
-    title: "Click me, %(name)s"
+    title: "Click me, %(name)s",
+    plural: {
+      zero: "No items",
+      one: "One item",
+      other: "%(count)s items"
+    }
   }
 };
 
 const de = {
   test: {
     greeting: "Guten Tag, %(name)s",
-    title: "Dies ist ein Titel"
+    title: "Dies ist ein Titel",
+    plural: {
+      zero: "Keine Gegenstände",
+      one: "Ein Gegenstand",
+      other: "%(count)s Artikel"
+    }
   }
 };
 
@@ -29,8 +40,8 @@ const values = {
 
 const defaultExpected = "<span>Hello, foobar</span>";
 
-counterpart.registerTranslations("en", en);
-counterpart.registerTranslations("de", de);
+counterpart.registerTranslations("en", { ...en, ...localeDefaults });
+counterpart.registerTranslations("de", { ...de, ...localeDefaults });
 
 const withLocale = (locale: string) => (callback: () => void) =>
   counterpart.withLocale(locale, callback);
@@ -86,6 +97,56 @@ describe("<Translate />", () => {
       expect(elem.html()).toEqual(
         `<span title="Click me, foobar">Hello, foobar</span>`
       );
+    });
+  });
+
+  it("handles counterpart arguments", () => {
+    withEn(() => {
+      const elem0 = shallow(
+        <Translate with={values} count={0}>
+          test.plural
+        </Translate>
+      );
+      expect(elem0.html()).toEqual(`<span>No items</span>`);
+
+      const elem1 = shallow(
+        <Translate with={values} count={1}>
+          test.plural
+        </Translate>
+      );
+      expect(elem1.html()).toEqual(`<span>One item</span>`);
+
+      const elem2 = shallow(
+        <Translate with={values} count={2}>
+          test.plural
+        </Translate>
+      );
+      expect(elem2.html()).toEqual(`<span>2 items</span>`);
+    });
+  });
+
+  it("pluralizes languages other than english", () => {
+    withDe(() => {
+      const elem0 = shallow(
+        <Translate with={values} count={0}>
+          test.plural
+        </Translate>
+      );
+      expect(elem0.html()).toEqual(`<span>Keine Gegenstände</span>`);
+
+      const elem1 = shallow(
+        <Translate with={values} count={1}>
+          test.plural
+        </Translate>
+      );
+      expect(elem1.html()).toEqual(`<span>Ein Gegenstand</span>`);
+
+      const elem2 = shallow(
+        <Translate with={values} count={2}>
+          test.plural
+        </Translate>
+      );
+      expect(elem2.html()).toEqual(`<span>2 Artikel</span>`);
     });
   });
 

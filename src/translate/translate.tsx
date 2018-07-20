@@ -8,6 +8,7 @@ interface ITranslateProps extends React.HTMLProps<HTMLElement> {
   // but using Record<string, HTMLAttributes<HTMLElement>> causes issues below
   attributes?: { [key: string]: string };
   children?: string | string[];
+  count?: number;
   component?: keyof React.ReactHTML;
   displayName?: string;
   locale?: string;
@@ -52,9 +53,11 @@ export class Translate extends React.PureComponent<
     const {
       attributes,
       children = "",
+      count = undefined,
       displayName,
       locale: propsLocale,
       ref, // Have to strip off ref for some reason?
+      with: replacements,
       ...rest
     } = this.props;
 
@@ -72,11 +75,16 @@ export class Translate extends React.PureComponent<
     const translationPath = translate(children, {
       locale,
       interpolate: false,
-      ...rest
+      count,
+      ...replacements
     });
 
     return (
-      <Interpolate {...rest} {...translatedAttrs}>
+      <Interpolate
+        with={{ ...replacements, count: `${count}` }}
+        {...rest}
+        {...translatedAttrs}
+      >
         {translationPath}
       </Interpolate>
     );

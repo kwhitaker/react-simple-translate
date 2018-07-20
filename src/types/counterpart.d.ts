@@ -33,3 +33,11 @@ declare module "counterpart" {
   const Instance: typeof import("counterpart");
   const Translator: typeof import("counterpart");
 }
+
+declare module "counterpart-defaults" {
+  export const localeDefaults: {
+    counterpart: {
+      [key: string]: any;
+    };
+  };
+}
