@@ -1,6 +1,6 @@
 {
   "name": "react-simple-translate",
-  "version": "1.0.0-beta",
+  "version": "1.0.0-beta.1",
   "description": "An easy to use and implement translation suite for React",
   "entry": "",
   "main": "./lib/index.js",
