@@ -29,6 +29,13 @@ counterpart.setLocale("de");
 return <Translate with={values}>test.greeting</Translate>;
 ```
 
+### Using React's context
+
+Instead of relying on a global `counterpart` instance, you can pass
+an instance down through React's context. Currently, only the [legacy context](https://reactjs.org/docs/legacy-context.html) is supported, but an update for the current contex API is coming.
+
+You can find an example of this by looking at the [`<ContextTestHelper />`](https://github.com/kwhitaker/react-simple-translate/blob/master/src/translate/context-test-helper.tsx) component.
+
 ## API
 
 ### `<Translate with={Object}>{children}</Translate>`

@@ -1,5 +1,6 @@
 import * as React from "react";
-import { getLocale, onLocaleChange, translate } from "counterpart";
+import * as counterpart from "counterpart";
+import * as PropTypes from "prop-types";
 
 import { Interpolate } from "../interpolate/interpolate";
 
@@ -28,16 +29,20 @@ export class Translate extends React.PureComponent<
     displayName: "Translate"
   };
 
+  public static contextTypes = {
+    translator: PropTypes.object
+  };
+
   constructor(props: ITranslateProps) {
     super(props);
     this.state = {
-      locale: props.locale || getLocale()
+      locale: props.locale || this.getTranslator().getLocale()
     };
   }
 
   public componentDidMount() {
     if (!this.props.locale) {
-      onLocaleChange(this.handleChangeLocale);
+      this.getTranslator().onLocaleChange(this.handleChangeLocale);
     }
   }
 
@@ -63,7 +68,7 @@ export class Translate extends React.PureComponent<
 
     const translatedAttrs: { [key: string]: React.ReactChild } = attributes
       ? Object.keys(attributes!).reduce((newAttrs, key) => {
-          newAttrs[key] = translate(attributes[key], {
+          newAttrs[key] = this.getTranslator().translate(attributes[key], {
             locale,
             interpolate: true,
             ...this.props.with
@@ -72,7 +77,7 @@ export class Translate extends React.PureComponent<
         }, {})
       : {};
 
-    const translationPath = translate(children, {
+    const translationPath = this.getTranslator().translate(children, {
       locale,
       interpolate: false,
       count,
@@ -93,4 +98,9 @@ export class Translate extends React.PureComponent<
   private handleChangeLocale = (locale: string) => {
     this.setState({ locale });
   };
+
+  private getTranslator = () =>
+    this.context && this.context.translator
+      ? this.context.translator
+      : counterpart;
 }

@@ -7,6 +7,7 @@ import * as counterpart from "counterpart";
 
 import { Translate } from "./translate";
 import { localeDefaults } from "../counterpart-defaults";
+import { ContextTest } from "./context-test-helper";
 
 configure({ adapter: new Adapter() });
 
@@ -185,5 +186,16 @@ describe("<Translate />", () => {
 
     expect(elem.state("locale")).toEqual("de");
     expect(elem.html()).toEqual("<span>Guten Tag, foobar</span>");
+  });
+
+  it("can take a translator fro the context", () => {
+    counterpart.withLocale("ch", () => {
+      const elem = mount(
+        <ContextTest>
+          <Translate with={values}>test.greeting</Translate>
+        </ContextTest>
+      );
+      expect(elem.text()).toBe("Ni hao, foobar");
+    });
   });
 });
