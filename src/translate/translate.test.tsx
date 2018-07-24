@@ -39,7 +39,7 @@ const values = {
   name: "foobar"
 };
 
-const defaultExpected = "<span>Hello, foobar</span>";
+const defaultExpected = "Hello, foobar";
 
 counterpart.registerTranslations("en", { ...en, ...localeDefaults });
 counterpart.registerTranslations("de", { ...de, ...localeDefaults });
@@ -73,7 +73,7 @@ describe("<Translate />", () => {
 
     withDe(function() {
       const elem = shallow(<Translate with={values}>test.greeting</Translate>);
-      expect(elem.html()).toEqual("<span>Guten Tag, foobar</span>");
+      expect(elem.html()).toEqual("Guten Tag, foobar");
     });
   });
 
@@ -83,21 +83,8 @@ describe("<Translate />", () => {
     };
 
     withEn(() => {
-      const elem = render(<Translate with={values}>test.greeting</Translate>);
+      const elem = mount(<Translate with={values}>test.greeting</Translate>);
       expect(elem.find("strong").length).toBe(1);
-    });
-  });
-
-  it("translates a set of attributes", () => {
-    withEn(() => {
-      const elem = shallow(
-        <Translate with={values} attributes={{ title: "test.title" }}>
-          test.greeting
-        </Translate>
-      );
-      expect(elem.html()).toEqual(
-        `<span title="Click me, foobar">Hello, foobar</span>`
-      );
     });
   });
 
@@ -108,21 +95,21 @@ describe("<Translate />", () => {
           test.plural
         </Translate>
       );
-      expect(elem0.html()).toEqual(`<span>No items</span>`);
+      expect(elem0.html()).toEqual(`No items`);
 
       const elem1 = shallow(
         <Translate with={values} count={1}>
           test.plural
         </Translate>
       );
-      expect(elem1.html()).toEqual(`<span>One item</span>`);
+      expect(elem1.html()).toEqual(`One item`);
 
       const elem2 = shallow(
         <Translate with={values} count={2}>
           test.plural
         </Translate>
       );
-      expect(elem2.html()).toEqual(`<span>2 items</span>`);
+      expect(elem2.html()).toEqual(`2 items`);
     });
   });
 
@@ -133,21 +120,21 @@ describe("<Translate />", () => {
           test.plural
         </Translate>
       );
-      expect(elem0.html()).toEqual(`<span>Keine Gegenstände</span>`);
+      expect(elem0.html()).toEqual(`Keine Gegenstände`);
 
       const elem1 = shallow(
         <Translate with={values} count={1}>
           test.plural
         </Translate>
       );
-      expect(elem1.html()).toEqual(`<span>Ein Gegenstand</span>`);
+      expect(elem1.html()).toEqual(`Ein Gegenstand`);
 
       const elem2 = shallow(
         <Translate with={values} count={2}>
           test.plural
         </Translate>
       );
-      expect(elem2.html()).toEqual(`<span>2 Artikel</span>`);
+      expect(elem2.html()).toEqual(`2 Artikel`);
     });
   });
 
@@ -185,7 +172,7 @@ describe("<Translate />", () => {
     elem.update();
 
     expect(elem.state("locale")).toEqual("de");
-    expect(elem.html()).toEqual("<span>Guten Tag, foobar</span>");
+    expect(elem.html()).toEqual("Guten Tag, foobar");
   });
 
   it("can take a translator fro the context", () => {

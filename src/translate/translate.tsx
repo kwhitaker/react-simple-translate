@@ -5,12 +5,8 @@ import * as PropTypes from "prop-types";
 import { Interpolate } from "../interpolate/interpolate";
 
 interface ITranslateProps extends React.HTMLProps<HTMLElement> {
-  // FIXME it would be nice to limit this to valid HTML attributes
-  // but using Record<string, HTMLAttributes<HTMLElement>> causes issues below
-  attributes?: { [key: string]: string };
   children?: string | string[];
   count?: number;
-  component?: keyof React.ReactHTML;
   displayName?: string;
   locale?: string;
   with?: Record<string, React.ReactChild>;
@@ -25,7 +21,6 @@ export class Translate extends React.PureComponent<
   ITranslateState
 > {
   public static defaultProps: ITranslateProps = {
-    component: "span",
     displayName: "Translate"
   };
 
@@ -56,7 +51,6 @@ export class Translate extends React.PureComponent<
   public render() {
     const { locale } = this.state;
     const {
-      attributes,
       children = "",
       count = undefined,
       displayName,
@@ -66,17 +60,6 @@ export class Translate extends React.PureComponent<
       ...rest
     } = this.props;
 
-    const translatedAttrs: { [key: string]: React.ReactChild } = attributes
-      ? Object.keys(attributes!).reduce((newAttrs, key) => {
-          newAttrs[key] = this.getTranslator().translate(attributes[key], {
-            locale,
-            interpolate: true,
-            ...this.props.with
-          });
-          return newAttrs;
-        }, {})
-      : {};
-
     const translationPath = this.getTranslator().translate(children, {
       locale,
       interpolate: false,
@@ -85,11 +68,7 @@ export class Translate extends React.PureComponent<
     });
 
     return (
-      <Interpolate
-        with={{ ...replacements, count: `${count}` }}
-        {...rest}
-        {...translatedAttrs}
-      >
+      <Interpolate with={{ ...replacements, count: `${count}` }} {...rest}>
         {translationPath}
       </Interpolate>
     );
