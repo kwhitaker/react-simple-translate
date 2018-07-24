@@ -5,18 +5,12 @@ const REGEXP = /\%\((.+?)\)s/;
 export interface IInterpolateProps extends React.HTMLProps<HTMLElement> {
   children?: string;
   count?: number;
-  component?: keyof React.ReactHTML;
   with?: Record<string, React.ReactChild>;
 }
 
 export class Interpolate extends React.PureComponent<IInterpolateProps, never> {
   public render() {
-    const {
-      children = "",
-      component = "span",
-      with: replacements = {},
-      ...rest
-    } = this.props;
+    const { children = "", with: replacements = {}, ...rest } = this.props;
     const finalChildren = children
       .split(REGEXP)
       .reduce<React.ReactChild[]>((memo, match, idx) => {
@@ -33,6 +27,6 @@ export class Interpolate extends React.PureComponent<IInterpolateProps, never> {
         return memo;
       }, []);
 
-    return React.createElement(component, rest, ...finalChildren);
+    return React.createElement(React.Fragment, rest, ...finalChildren);
   }
 }
