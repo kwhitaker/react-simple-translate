@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/kwhitaker/react-simple-translate.svg?branch=master)](https://travis-ci.com/kwhitaker/react-simple-translate)
+
 # React Simple Translate
 
 An easy to use translation component which wraps the [counterpart](https://github.com/martinandert/counterpart/) module.
