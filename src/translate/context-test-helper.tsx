@@ -1,6 +1,9 @@
-import * as React from "react";
+/// <reference path="../types/counterpart.d.ts" />
 
-import { contextTranslator, TranslatorContext } from "./translator-context";
+import * as React from "react";
+import * as counterpart from "counterpart";
+
+import { TranslatorContext } from "./translator-context";
 import { localeDefaults } from "../counterpart-defaults";
 
 const en = {
@@ -27,6 +30,7 @@ const de = {
   }
 };
 
+const contextTranslator = new (counterpart as any).Instance();
 contextTranslator.registerTranslations("en", { ...en, ...localeDefaults });
 contextTranslator.registerTranslations("de", { ...de, ...localeDefaults });
 

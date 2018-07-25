@@ -1,12 +1,13 @@
 import * as React from "react";
 import { Interpolate } from "../interpolate/interpolate";
 import { TranslatorContext } from "./translator-context";
+import { ITranslator } from "../typings";
 
 export interface ITranslateProps {
   children?: string | string[];
   count?: number;
   locale?: string;
-  translator: typeof import("counterpart");
+  translator: ITranslator;
   with?: Record<string, React.ReactChild>;
 }
 
@@ -20,11 +21,10 @@ export class Translate extends React.PureComponent<ITranslateProps, never> {
       with: replacements
     } = this.props;
 
-    const translationPath = translator!.translate(children, {
-      locale: locale || translator!.getLocale(),
+    const translationPath = translator.translate(children, {
+      locale: locale || translator.getLocale(),
       interpolate: false,
-      count,
-      ...replacements
+      count
     });
 
     return (

@@ -1,5 +1,3 @@
-/// <reference path="../types/counterpart.d.ts" />
-
 import * as React from "react";
 import { configure, shallow } from "enzyme";
 import * as Adapter from "enzyme-adapter-react-16";
@@ -35,14 +33,25 @@ describe("<Translate />", () => {
   });
 
   it("creates a component with the expected translated text", () => {
-    withEn(function() {
+    withEn(() => {
       const elem = shallow(<Wrapped />);
       expect(elem.html()).toEqual(defaultExpected);
     });
 
-    withDe(function() {
+    withDe(() => {
       const elem = shallow(<Wrapped />);
       expect(elem.html()).toEqual("Guten Tag, foobar");
+    });
+  });
+
+  it("works with accepts array syntax", () => {
+    withEn(() => {
+      const elem = shallow(
+        <ContextTest>
+          <Translate with={values}>{["test", "greeting"]}</Translate>
+        </ContextTest>
+      );
+      expect(elem.html()).toEqual(defaultExpected);
     });
   });
 
@@ -61,7 +70,7 @@ describe("<Translate />", () => {
     });
   });
 
-  it("handles counterpart arguments", () => {
+  it("handles pluralization", () => {
     withEn(() => {
       const elem0 = shallow(
         <ContextTest>

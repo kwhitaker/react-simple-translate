@@ -1,3 +1,5 @@
 export * from "./interpolate/interpolate";
-export * from "./translate/translate";
 export * from "./counterpart-defaults";
+
+import Translate from "./translate/translate";
+export default Translate;
