@@ -2,41 +2,56 @@
 
 # React Simple Translate
 
-An easy to use translation component which wraps the [counterpart](https://github.com/martinandert/counterpart/) module.
+An easy to use translation component. Given a translator (which shares the shape of [counterpart](https://github.com/martinandert/counterpart/)), and a set of translations, it will handle locale swapping and string interpolation.
 
 ## Usage
 
 ```javascript
-import { Translate } from "react-simple-translate";
-import * as counterpart from "counterpart";
+import Translate, { TranslatorContext } from "react-simple-translate";
+import someTranslator from "some-translator-lib";
 
-counterpart.registerTranslations("en", {
+someTranslator.registerTranslations("en", {
   test: { greeting: "Hello, %(name)s" }
 });
-counterpart.registerTranslations("de", {
+someTranslator.registerTranslations("de", {
   test: { greeting: "Guten Tag, %(name)s" }
 });
-counterpart.setLocale("en");
+someTranslator.setLocale("en");
 
-const values = {
-  name: "Bob"
-};
+const Greeting = props => (
+  <p>
+    <Translate with={props.values}>test.greeting</Translate>
+  </p>
+);
 
-// Returns <>Hello, Bob</>
-return <Translate with={values}>test.greeting</Translate>;
+class TranslatedComponent extends React.Component {
+  state = {
+    values: name: "Bob"
+  }
 
-counterpart.setLocale("de");
+  render() {
+    return (
+      <div>
+        <TranslatorContext.Provider value={someTranslator}>
+          <Greeting values={this.state.values} />
+        </TranslatorContext.Provider>
+      </div>
+    );
+  }
+}
 
-// Returns <>Guten Tag, Bob</>
-return <Translate with={values}>test.greeting</Translate>;
+// Returns <div><p>Hello, Bob</p></div>
+return <TranslatedComponent />;
+
+someTranslator.setLocale("de");
+
+// Returns <div><p>Guten Tag, Bob</p></div>
+return <TranslatedComponent />;
 ```
 
-### Using React's context
+## Optional Dependencies
 
-Instead of relying on a global `counterpart` instance, you can pass
-an instance down through React's context. Currently, only the [legacy context](https://reactjs.org/docs/legacy-context.html) is supported, but an update for the current contex API is coming.
-
-You can find an example of this by looking at the [`<ContextTestHelper />`](https://github.com/kwhitaker/react-simple-translate/blob/master/src/translate/context-test-helper.tsx) component.
+While this component was developed with [counterpart](https://github.com/martinandert/counterpart/) in mind it is optional; you can pass whatever translator you need into it, so long as it matches the expected shape.
 
 ## API
 
@@ -46,28 +61,9 @@ Given a string with keys, replace those keys with values from the current `count
 
 #### Arguments
 
-- **with**: An object of key/value pairs where the keys match the specified keys in **children**. Values must be of type `React.ReactChild`.
-- **children**: A dot notation path corresponding to the locale string to be translated.
-- **...{counterpart args}**: You can pass in any other argument that [counterpart](https://github.com/martinandert/counterpart/) takes, and it should handle them a well.
-
-#### Usage
-
-```javascript
-import { Translate } from "react-simple-translate";
-import * as counterpart from "counterpart";
-
-counterpart.registerTranslations("en", {
-  test: { greeting: "Hello, %(name)s" }
-});
-counterpart.setLocale("en");
-
-const values = {
-  name: "Bob"
-};
-
-// Returns <>Hello, Bob</>
-return <Translate with={values}>test.greeting</Translate>;
-```
+- **with: Object**: An object of key/value pairs where the keys match the specified keys in **children**. Values must be of type `React.ReactChild`.
+- **children: String | String[]**: A dot notation or array path corresponding to the locale string to be translated.
+- **count?: Number**: An optional parameter for handling pluralization.
 
 ---
 
@@ -77,9 +73,9 @@ Given a string with keys, replace those keys with values from a provided object.
 
 #### Arguments
 
-- **with**: An object of key value pairs where the keys match the specified keys in **children**. Values must be of type `React.ReactChild`.
+- **with: Object**: An object of key value pairs where the keys match the specified keys in **children**. Values must be of type `React.ReactChild`.
 - **children**: The string to be interpolated. Keys to replace _must_ be surrouned with `%()s` (i.e. `%(name)s`).
-- **...{counterpart args}**: You can pass in any other argument that [counterpart](https://github.com/martinandert/counterpart/) takes, and it should handle them a well.
+- **count?: Number**: An optional parameter for handling pluralization.
 
 #### Usage
 
@@ -95,7 +91,7 @@ return <Interpolate with={values}>Hello, %(name)s</Interpolate>;
 
 ---
 
-## Pluralization
+## Pluralization with Counterpart
 
 Because of a [bug in counterpart](https://github.com/martinandert/counterpart/issues/12), using
 pluralization with locales other than the default requires a work-around. To help with this, I've

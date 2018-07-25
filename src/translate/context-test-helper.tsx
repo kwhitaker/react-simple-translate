@@ -30,7 +30,7 @@ const de = {
   }
 };
 
-const contextTranslator = new (counterpart as any).Instance();
+export const contextTranslator = new (counterpart as any).Instance();
 contextTranslator.registerTranslations("en", { ...en, ...localeDefaults });
 contextTranslator.registerTranslations("de", { ...de, ...localeDefaults });
 

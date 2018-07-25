@@ -3,8 +3,9 @@ import { configure, shallow } from "enzyme";
 import * as Adapter from "enzyme-adapter-react-16";
 
 import Translate from "./translate";
-import { contextTranslator } from "./translator-context";
-import { ContextTest } from "./context-test-helper";
+import { TranslatorContext } from "./translator-context";
+
+import { contextTranslator, ContextTest } from "./context-test-helper";
 
 configure({ adapter: new Adapter() });
 
@@ -113,9 +114,11 @@ describe("<Translate />", () => {
       expect(elem0.html()).toEqual(`Keine Gegenstände`);
 
       const elem1 = shallow(
-        <Translate with={values} count={1}>
-          test.plural
-        </Translate>
+        <ContextTest>
+          <Translate with={values} count={1}>
+            test.plural
+          </Translate>
+        </ContextTest>
       );
       expect(elem1.html()).toEqual(`Ein Gegenstand`);
 
@@ -166,5 +169,15 @@ describe("<Translate />", () => {
     elem.update();
 
     expect(elem.html()).toEqual("Guten Tag, foobar");
+  });
+
+  it("throws an error if there is no translator in the context", () => {
+    try {
+      shallow(<Translate with={values} />).html();
+    } catch (e) {
+      expect(e.toString()).toEqual(
+        "Error: translator not provided via context"
+      );
+    }
   });
 });

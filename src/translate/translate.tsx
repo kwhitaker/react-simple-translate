@@ -39,6 +39,11 @@ export class Translate extends React.PureComponent<ITranslateProps, never> {
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export default (props: Omit<ITranslateProps, "translator">) => (
   <TranslatorContext.Consumer>
-    {translator => <Translate {...props} translator={translator} />}
+    {translator => {
+      if (translator === undefined) {
+        throw new Error("translator not provided via context");
+      }
+      return <Translate {...props} translator={translator} />;
+    }}
   </TranslatorContext.Consumer>
 );
