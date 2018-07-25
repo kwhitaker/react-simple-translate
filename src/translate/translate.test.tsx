@@ -1,39 +1,14 @@
 /// <reference path="../types/counterpart.d.ts" />
 
 import * as React from "react";
-import { configure, shallow, render, mount } from "enzyme";
+import { configure, shallow } from "enzyme";
 import * as Adapter from "enzyme-adapter-react-16";
-import * as counterpart from "counterpart";
 
-import { Translate } from "./translate";
-import { localeDefaults } from "../counterpart-defaults";
+import Translate from "./translate";
+import { contextTranslator } from "./translator-context";
 import { ContextTest } from "./context-test-helper";
 
 configure({ adapter: new Adapter() });
-
-const en = {
-  test: {
-    greeting: "Hello, %(name)s",
-    title: "Click me, %(name)s",
-    plural: {
-      zero: "No items",
-      one: "One item",
-      other: "%(count)s items"
-    }
-  }
-};
-
-const de = {
-  test: {
-    greeting: "Guten Tag, %(name)s",
-    title: "Dies ist ein Titel",
-    plural: {
-      zero: "Keine Gegenstände",
-      one: "Ein Gegenstand",
-      other: "%(count)s Artikel"
-    }
-  }
-};
 
 const values = {
   name: "foobar"
@@ -41,38 +16,32 @@ const values = {
 
 const defaultExpected = "Hello, foobar";
 
-counterpart.registerTranslations("en", { ...en, ...localeDefaults });
-counterpart.registerTranslations("de", { ...de, ...localeDefaults });
-
 const withLocale = (locale: string) => (callback: () => void) =>
-  counterpart.withLocale(locale, callback);
+  contextTranslator.withLocale(locale, callback);
 const withEn = withLocale("en");
 const withDe = withLocale("de");
 
+function Wrapped() {
+  return (
+    <ContextTest>
+      <Translate with={values}>test.greeting</Translate>
+    </ContextTest>
+  );
+}
+
 describe("<Translate />", () => {
   beforeEach(() => {
-    counterpart.setLocale(undefined);
-  });
-
-  it("passes the props down to the <Interpolate /> component", () => {
-    withEn(function() {
-      const elem = shallow(
-        <Translate with={values} className="foo">
-          test.greeting
-        </Translate>
-      );
-      expect(elem.prop("className")).toEqual("foo");
-    });
+    contextTranslator.setLocale(undefined);
   });
 
   it("creates a component with the expected translated text", () => {
     withEn(function() {
-      const elem = shallow(<Translate with={values}>test.greeting</Translate>);
+      const elem = shallow(<Wrapped />);
       expect(elem.html()).toEqual(defaultExpected);
     });
 
     withDe(function() {
-      const elem = shallow(<Translate with={values}>test.greeting</Translate>);
+      const elem = shallow(<Wrapped />);
       expect(elem.html()).toEqual("Guten Tag, foobar");
     });
   });
@@ -83,31 +52,41 @@ describe("<Translate />", () => {
     };
 
     withEn(() => {
-      const elem = mount(<Translate with={values}>test.greeting</Translate>);
-      expect(elem.find("strong").length).toBe(1);
+      const elem = shallow(
+        <ContextTest>
+          <Translate with={values}>test.greeting</Translate>
+        </ContextTest>
+      );
+      expect(elem.html()).toEqual("Hello, <strong>foobar</strong>");
     });
   });
 
   it("handles counterpart arguments", () => {
     withEn(() => {
       const elem0 = shallow(
-        <Translate with={values} count={0}>
-          test.plural
-        </Translate>
+        <ContextTest>
+          <Translate with={values} count={0}>
+            test.plural
+          </Translate>
+        </ContextTest>
       );
       expect(elem0.html()).toEqual(`No items`);
 
       const elem1 = shallow(
-        <Translate with={values} count={1}>
-          test.plural
-        </Translate>
+        <ContextTest>
+          <Translate with={values} count={1}>
+            test.plural
+          </Translate>
+        </ContextTest>
       );
       expect(elem1.html()).toEqual(`One item`);
 
       const elem2 = shallow(
-        <Translate with={values} count={2}>
-          test.plural
-        </Translate>
+        <ContextTest>
+          <Translate with={values} count={2}>
+            test.plural
+          </Translate>
+        </ContextTest>
       );
       expect(elem2.html()).toEqual(`2 items`);
     });
@@ -116,9 +95,11 @@ describe("<Translate />", () => {
   it("pluralizes languages other than english", () => {
     withDe(() => {
       const elem0 = shallow(
-        <Translate with={values} count={0}>
-          test.plural
-        </Translate>
+        <ContextTest>
+          <Translate with={values} count={0}>
+            test.plural
+          </Translate>
+        </ContextTest>
       );
       expect(elem0.html()).toEqual(`Keine Gegenstände`);
 
@@ -130,9 +111,11 @@ describe("<Translate />", () => {
       expect(elem1.html()).toEqual(`Ein Gegenstand`);
 
       const elem2 = shallow(
-        <Translate with={values} count={2}>
-          test.plural
-        </Translate>
+        <ContextTest>
+          <Translate with={values} count={2}>
+            test.plural
+          </Translate>
+        </ContextTest>
       );
       expect(elem2.html()).toEqual(`2 Artikel`);
     });
@@ -143,7 +126,9 @@ describe("<Translate />", () => {
     const someVar = "test";
     withEn(() => {
       const elem = shallow(
-        <Translate with={values}>{`${someVar}.greeting`}</Translate>
+        <ContextTest>
+          <Translate with={values}>{`${someVar}.greeting`}</Translate>
+        </ContextTest>
       );
       expect(elem.html()).toEqual(defaultExpected);
     });
@@ -152,37 +137,25 @@ describe("<Translate />", () => {
   it("respects a locale that's set as a prop", () => {
     withDe(() => {
       const elem = shallow(
-        <Translate with={values} locale="en">
-          test.greeting
-        </Translate>
+        <ContextTest>
+          <Translate with={values} locale="en">
+            test.greeting
+          </Translate>
+        </ContextTest>
       );
-      expect(elem.state("locale")).toEqual("en");
       expect(elem.html()).toEqual(defaultExpected);
     });
   });
 
   it("listens for locale switching and updates", () => {
-    counterpart.setLocale("en");
-    const elem = shallow(<Translate with={values}>test.greeting</Translate>);
+    contextTranslator.setLocale("en");
+    const elem = shallow(<Wrapped />);
 
-    expect(elem.state("locale")).toEqual("en");
     expect(elem.html()).toEqual(defaultExpected);
 
-    counterpart.setLocale("de");
+    contextTranslator.setLocale("de");
     elem.update();
 
-    expect(elem.state("locale")).toEqual("de");
     expect(elem.html()).toEqual("Guten Tag, foobar");
-  });
-
-  it("can take a translator fro the context", () => {
-    counterpart.withLocale("ch", () => {
-      const elem = mount(
-        <ContextTest>
-          <Translate with={values}>test.greeting</Translate>
-        </ContextTest>
-      );
-      expect(elem.text()).toBe("Ni hao, foobar");
-    });
   });
 });
