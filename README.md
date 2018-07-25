@@ -49,9 +49,22 @@ someTranslator.setLocale("de");
 return <TranslatedComponent />;
 ```
 
+You can also pass a translator directly to `<Translate />` if you don't want to use context:
+
+```javascript
+import { Translate } from "react-simple-translate";
+import someTranslator from "some-translator-lib";
+
+const elem = <Translate with={someObj} translator={someTranslator} />;
+```
+
+---
+
 ## Optional Dependencies
 
 While this component was developed with [counterpart](https://github.com/martinandert/counterpart/) in mind it is optional; you can pass whatever translator you need into it, so long as it matches the expected shape.
+
+---
 
 ## API
 
