@@ -77,6 +77,7 @@ Given a string with keys, replace those keys with values from the current `count
 - **with: Object**: An object of key/value pairs where the keys match the specified keys in **children**. Values must be of type `React.ReactChild`.
 - **children: String | String[]**: A dot notation or array path corresponding to the locale string to be translated.
 - **count?: Number**: An optional parameter for handling pluralization.
+- **translator: Object**: a translator, matching the shape of ITranslator. By default, you should use the context, but you can pass it in as a prop if you need to.
 
 ---
 
