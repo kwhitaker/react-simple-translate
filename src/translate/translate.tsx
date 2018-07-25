@@ -2,12 +2,11 @@ import * as React from "react";
 import { Interpolate } from "../interpolate/interpolate";
 import { TranslatorContext } from "./translator-context";
 
-interface ITranslateProps extends React.HTMLProps<HTMLElement> {
+export interface ITranslateProps {
   children?: string | string[];
   count?: number;
-  displayName?: string;
   locale?: string;
-  translator?: typeof import("counterpart");
+  translator: typeof import("counterpart");
   with?: Record<string, React.ReactChild>;
 }
 
@@ -16,12 +15,9 @@ export class Translate extends React.PureComponent<ITranslateProps, never> {
     const {
       children = "",
       count = undefined,
-      displayName,
       locale,
-      ref, // Have to strip off ref for some reason?
       translator,
-      with: replacements,
-      ...rest
+      with: replacements
     } = this.props;
 
     const translationPath = translator!.translate(children, {
@@ -32,18 +28,17 @@ export class Translate extends React.PureComponent<ITranslateProps, never> {
     });
 
     return (
-      <Interpolate with={{ ...replacements, count: `${count}` }} {...rest}>
+      <Interpolate with={{ ...replacements, count: `${count}` }}>
         {translationPath}
       </Interpolate>
     );
   }
 }
 
-export default React.forwardRef((props: ITranslateProps, ref) => (
+// https://stackoverflow.com/a/48216010/195653
+type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
+export default (props: Omit<ITranslateProps, "translator">) => (
   <TranslatorContext.Consumer>
-    {translator => (
-      // TODO fix the ref as any typing
-      <Translate {...props} translator={translator} ref={ref as any} />
-    )}
+    {translator => <Translate {...props} translator={translator} />}
   </TranslatorContext.Consumer>
-));
+);

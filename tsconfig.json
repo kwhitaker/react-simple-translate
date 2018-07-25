@@ -15,5 +15,5 @@
     "outDir": "lib"
   },
   "compileOnSave": false,
-  "exclude": ["**/*.test.*"]
+  "exclude": ["**/*.test.*", "lib"]
 }
