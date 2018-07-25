@@ -52,7 +52,7 @@ return <TranslatedComponent />;
 You can also pass a translator directly to `<Translate />` if you don't want to use context:
 
 ```javascript
-import { Translate } from "react-simple-translate";
+import { Translate } from "react-simple-translate/translate"; //Imports the component without the context wrapper
 import someTranslator from "some-translator-lib";
 
 const elem = <Translate with={someObj} translator={someTranslator} />;
