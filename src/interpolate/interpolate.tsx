@@ -2,7 +2,7 @@ import * as React from "react";
 
 const REGEXP = /\%\((.+?)\)s/;
 
-export interface IInterpolateProps extends React.HTMLProps<HTMLElement> {
+export interface IInterpolateProps {
   children?: string;
   count?: number;
   with?: Record<string, React.ReactChild>;
@@ -27,6 +27,6 @@ export class Interpolate extends React.PureComponent<IInterpolateProps, never> {
         return memo;
       }, []);
 
-    return React.createElement(React.Fragment, rest, ...finalChildren);
+    return React.createElement(React.Fragment, {}, ...finalChildren);
   }
 }

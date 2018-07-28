@@ -1,85 +1,49 @@
 import * as React from "react";
-import * as counterpart from "counterpart";
-import * as PropTypes from "prop-types";
-
 import { Interpolate } from "../interpolate/interpolate";
+import { TranslatorContext } from "./translator-context";
+import { ITranslator } from "../typings";
 
-interface ITranslateProps extends React.HTMLProps<HTMLElement> {
+export interface ITranslateProps {
   children?: string | string[];
   count?: number;
-  displayName?: string;
   locale?: string;
+  translator: ITranslator;
   with?: Record<string, React.ReactChild>;
 }
 
-interface ITranslateState {
-  locale: string;
-}
-
-export class Translate extends React.PureComponent<
-  ITranslateProps,
-  ITranslateState
-> {
-  public static defaultProps: ITranslateProps = {
-    displayName: "Translate"
-  };
-
-  public static contextTypes = {
-    translator: PropTypes.object
-  };
-
-  constructor(props: ITranslateProps) {
-    super(props);
-    this.state = {
-      locale: props.locale || this.getTranslator().getLocale()
-    };
-  }
-
-  public componentDidMount() {
-    if (!this.props.locale) {
-      this.getTranslator().onLocaleChange(this.handleChangeLocale);
-    }
-  }
-
-  public componentDidUpdate(lastProps: ITranslateProps) {
-    const { locale } = this.props;
-    if (locale && lastProps.locale !== locale) {
-      this.setState({ locale });
-    }
-  }
-
+export class Translate extends React.PureComponent<ITranslateProps, never> {
   public render() {
-    const { locale } = this.state;
     const {
       children = "",
       count = undefined,
-      displayName,
-      locale: propsLocale,
-      ref, // Have to strip off ref for some reason?
-      with: replacements,
-      ...rest
+      locale,
+      translator,
+      with: replacements
     } = this.props;
 
-    const translationPath = this.getTranslator().translate(children, {
-      locale,
+    const translationPath = translator.translate(children, {
+      locale: locale || translator.getLocale(),
       interpolate: false,
-      count,
-      ...replacements
+      count
     });
 
     return (
-      <Interpolate with={{ ...replacements, count: `${count}` }} {...rest}>
+      <Interpolate with={{ ...replacements, count: `${count}` }}>
         {translationPath}
       </Interpolate>
     );
   }
-
-  private handleChangeLocale = (locale: string) => {
-    this.setState({ locale });
-  };
-
-  private getTranslator = () =>
-    this.context && this.context.translator
-      ? this.context.translator
-      : counterpart;
 }
+
+// https://stackoverflow.com/a/48216010/195653
+type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
+export default (props: Omit<ITranslateProps, "translator">) => (
+  <TranslatorContext.Consumer>
+    {translator => {
+      if (translator === undefined) {
+        throw new Error("translator not provided via context");
+      }
+      return <Translate {...props} translator={translator} />;
+    }}
+  </TranslatorContext.Consumer>
+);
