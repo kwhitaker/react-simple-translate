@@ -4,6 +4,13 @@
 
 An easy to use translation component. Given a translator (which shares the shape of [counterpart](https://github.com/martinandert/counterpart/)), and a set of translations, it will handle locale swapping and string interpolation.
 
+## Installation
+```bash
+$ npm install react-simple-translate
+# or
+$ yarn add react-simple translate
+```
+
 ## Usage
 
 ```javascript
@@ -58,13 +65,9 @@ import someTranslator from "some-translator-lib";
 const elem = <Translate with={someObj} translator={someTranslator} />;
 ```
 
----
-
 ## Optional Dependencies
 
 While this component was developed with [counterpart](https://github.com/martinandert/counterpart/) in mind it is optional; you can pass whatever translator you need into it, so long as it matches the expected shape.
-
----
 
 ## API
 
